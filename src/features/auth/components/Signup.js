@@ -2,28 +2,19 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectLoggedInUser, createUserAsync } from "../authSlice";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 export default function Signup() {
   const dispatch = useDispatch();
-  const { register, handleSubmit, watch, formState: { errors }, } = useForm();
+  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const user = useSelector(selectLoggedInUser)
 
   console.log(errors);
-
-  const user = useSelector(selectLoggedInUser);
   
-
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
-      {user?.email}
+      {/* {user?.email} */}
+      {user && <Navigate to="/" replace={true}></Navigate>}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -37,7 +28,8 @@ export default function Signup() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form noValidate className="space-y-6" onSubmit={handleSubmit((data) => {
+          <form noValidate className="space-y-6" 
+          onSubmit={handleSubmit((data) => {
             console.log(data);
             dispatch(createUserAsync({email: data.email, password: data.password}))
           })}>
