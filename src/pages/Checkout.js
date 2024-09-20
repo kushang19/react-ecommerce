@@ -5,7 +5,7 @@ import { Link, Navigate } from "react-router-dom";
 import { deleteItemFromCartAsync, selectItems, updateCartAsync } from "../features/cart/cartSlice";
 import { useForm } from "react-hook-form";
 import { selectLoggedInUser, updateUserAsync } from "../features/auth/authSlice";
-import { createOrderAsync } from "../features/order/orderSlice";
+import { createOrderAsync, selectCurrentOrder } from "../features/order/orderSlice";
 
 
 export default function Checkout() {
@@ -13,6 +13,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const items = useSelector(selectItems);
   const user = useSelector(selectLoggedInUser);
+  const currentOrder = useSelector(selectCurrentOrder)
   const [selectAddress, setSelectAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('cash');
 
@@ -44,7 +45,17 @@ export default function Checkout() {
   }
 
   const handleOrder = () => {
-    const order = {items, totalAmount, totalItems, user, paymentMethod, selectAddress}
+    console.log("I was clicked");
+    
+    const order = {
+      items, 
+      totalAmount, 
+      totalItems, 
+      user, 
+      paymentMethod, 
+      selectAddress,
+      status: "pending", // other status can be delivered, received.
+    }
     dispatch(createOrderAsync(order));
 
     // TODO: redirect to order-success page
@@ -55,6 +66,7 @@ export default function Checkout() {
   return (
     <>
       {!items.length && <Navigate to="/" replace={true}></Navigate>}
+      {currentOrder && <Navigate to={`/order-success/${currentOrder.id}`} replace={true}></Navigate>}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg-px-8">
         <div className="grid grid-cols-1 gap-x-8 gay-y-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
